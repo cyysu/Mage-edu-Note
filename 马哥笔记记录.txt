@@ -1,0 +1,1056 @@
+马哥教育笔记(笔记采用Sublime Text 3整理)
+
+
+-Linux系统入门
+
+1. 内部命令和外部命令怎么区别
+    type ls
+
+2. 卸载redhat6.5自身带的yum源，安装centos6的源下面是下载网址
+
+    卸载本地的yum：
+        rpm -qa |grep yum |xargs rpm -e --nodeps
+
+    i386架构地址：
+        http://mirrors.163.com/centos/6/os/i386/Packages/
+
+    x86_64地址：
+        http://mirrors.163.com/centos/6/os/x86_64/Packages/
+
+    安装yum和配置yum源可以参考以下博客：
+        http://blog.csdn.net/andyzhaojianhui/article/details/51787750
+        http://fengyuzaitu.blog.51cto.com/5218690/1571030
+
+    设置完成之后记得要执行以下步骤：
+        yum clean all    #清除以前的缓存
+        yum makecache    #重建缓存
+        yum update       #更新源
+
+    注意： 在下载的源里面需要将 $releasever 全部换成版本号
+
+3. 配置xshell的选中复制，右键粘贴
+
+    1)打开xshell4，单击菜单栏的“Tools”选项，选中“Options”菜单，进入参数设置界面。
+    xshell4 选中复制，右键粘贴，超强复制粘贴功能
+
+    2)切换到"Keyboard and Mouse"栏，把"Right-bottox"要素的值选为“Paste the clipboard contents”，点击确定。在选项“Copy selected text to the auto”打“√”。
+
+4. 基础命令的查缺补漏
+
+    *1.  cd -                                        #可以在上一个目录和本地目录来回切换
+    *2.  history -c                                  #清空命令历史
+    *3.  which                                       #显示指定命令的完整路径
+    *4.  cat -n                                      #显示时，连行号一起输出
+    *5.  tac                                         #逆序显示文件内容
+    *6.  !$                                          #调用上一条命令的最后一个参数
+    *7.  ESC + .                                     #调用上一条命令的最后一个参数
+    *8.  !!                                          #执行上一条命令
+    *9.  tree -L                                     #指定显示的层级数目
+    *10. set tabstop=4                               #设置VIM编辑器下的tab缩进
+
+5. 练习题
+
+    练习1： 复制/etc目录下，所有以p开头，以非数字结尾的文件或目录至/tmp/mytest1目录；
+            # mkdir /tmp/mytest1
+            # cp -r /etc/p*[^[:digit:]]  /tmp/mytest1
+
+    练习2： 复制/etc/目录下，所有以.d结尾的文件或目录至/tmp/mytest2目录；
+            # mkdir /tmp/mytest2
+            # cp -r /etc/*.d  /tmp/mytest2
+
+    练习3： 复制/etc/目录下所有以l或m或n开头，以.conf结尾的文件至/tmp/mytest3目录；
+            # mkdir /tmp/mytest3
+            # cp -r /etc/[lmn]*.conf /tmp/mytest3
+
+    练习4： 显示/etc目录下，以任意一位数字开头，且以非数字结尾的文件或目录；
+            # ls -d /etc/[0-9]*[^0-9]
+
+    练习5： 如何创建/tmp/x/y1, /tmp/x/y2, /tmp/x/y1/a, /tmp/x/y1/b, /tmp/x/y2/a, /tmp/x/y2/b
+            # mkdir /tmp/x/{y1,y2}/{a,b}
+
+    练习6： 如何创建x_m, y_m, x_n, y_n
+            # mkdir {x,y}_{m,n}
+
+    练习7： 查看/etc/passwd文件的第6至第10行，并按第3个字段的数值大小进行排序，最后仅显示的各自的第1个字段；
+            # cat -n /etc/passwd | head -n 10 | tail -n 5 |cut -d: -f1 | sort -n
+
+    练习8：
+            创建用户mandriva, 其ID为2200， 基本组为distro，组ID为3300, 附加组为peguin；
+            # groupadd -g 3300 distro
+            # groupadd peguin
+            # useradd -u 2200 -g distro -G peguin mandriva
+
+    练习9： 创建用户gentoo，其全名为“Gentoo”，默认shell为/bin/tcsh；
+            # useradd -c "Gentoo" -s /bin/tcsh gentoo
+
+    练习10：修改mandriva的UID为4400, 基本组为linux， 附加组为distro和gentoo;
+            # usermod -u 4400 -g linux -a -G distro,gentoo mandriva
+
+    练习11：给gentoo添加密码，并设定其密码最短使用期限为2天，最长为60天，警告为3天，非活动期限为7天；
+            # echo 'gentoo' | passwd --stdin gentoo
+            # chage
+
+    练习12：如果用户root存在，显示其默认的shell程序；
+            # id root &> /dev/null && grep "^root\>" /etc/passwd | cut -d: -f7
+
+    练习13：找出/etc/passwd中的两位或三位数；
+            # grep "\<[0-9]\{2,3\}\>" /etc/passwd
+
+    练习14：显示/etc/rc.d/rc.sysinit文件中，至少以一个空白字符开头的且后面存非空白字符的行；
+            # grep "^[[:space:]]\+[^[:space:]]" /etc/grub2.cfg
+
+    练习15：找出"netstat -tan"命令的结果中以 'LISTEN' 后跟0、1或多个空白字符结尾的行；
+            # netstat -tan | grep "LISTEN[[:space:]]*$"
+
+*   练习16：添加用户bash、testbash、basher以及nologin(其shell为/sbin/nologin)；而后找出/etc/passwd文件中用户名同shell名的行
+            # grep "^\([[:alnum:]]\+\>\).*\1$" /etc/passwd
+
+    练习17：显示/proc/meminfo文件中以大写或小写S开头的行；
+            # grep -i '^s' /proc/meminfo
+            # grep '^[Ss]' /proc/meminfo
+            # grep -E '^(S|s)' /proc/meminfo
+
+    练习18：显示/etc/passwd文件中其默认shell为非/sbin/nologin的用户；
+            # grep -v "/sbin/nologin$" /etc/passwd | cut -d: -f1
+
+    练习19：显示/etc/passwd文件中其默认shell为/bin/bash的用户；
+            # grep "/bin/bash$" /etc/passwd | sort -t: -k3 -n | tail -1 | cut -d: -f1
+
+    练习20：写一个脚本
+            计算/etc/passwd文件中的第10个用户和第20用户的ID之和；
+
+            #!/bin/bash
+            userid1=$(head -n 10 /etc/passwd | tail -n 1 | cut -d: -f3)
+            userid2=$(head -n 20 /etc/passwd | tail -n 1 | cut -d: -f3)
+            useridsum=$[$userid1+$userid2]
+            echo "uid sum: $useridsum"
+
+    练习21：写一个脚本
+            传递两个文件路径作为参数给脚本，计算这两个文件中所有空白行之和；
+
+            #!/bin/bash
+            spaceline1=$(grep "^[[:space:]]*$" $1 | wc -l)
+            spaceline2=$(grep "^[[:space:]]*$" $2 | wc -l)
+            echo "The sum of space line: $[$spaceline1+$spaceline2]"
+
+    练习22：统计/etc, /var, /usr目录共有多少个一级子目录和文件；
+            #!/bin/bash
+            find /etc/ -type d | wc -l
+            find /etc/ -type f | wc -l
+            find /etc/ -type d | wc -l
+
+    练习23：查找/var目录下属主为root，且属组为mail的所有文件或目录；
+            # find /var -user root -group mail
+
+    练习24：查找/usr目录下不属于root、bin或hadoop的所有文件或目录；
+            # find /usr -not -user root -a -not -user bin -a -not -user hadoop
+            # find /usr -not \( -user root -o -user bin -o -user hadoop \)
+
+    练习25：查找/etc目录下最周一周内其内容修改过，同时属主不为root，也不是hadoop的文件或目录；
+            # find /etc -mtime -7 -a -not -user root -a -not -user hadoop
+            # find /etc/ -mtime -7 -a -not \( -user root -o -user hadoop \)
+
+    练习26：查找当前系统上没有属主或属组，且最近一个周内曾被访问过的文件或目录；
+            # find / -nouser -a -nogroup -a -atime -7
+
+    练习27：查找/etc目录下大于1M且类型为普通文件的所有文件；
+            # find /etc -size +1M -type f
+
+    练习28：查找/etc目录下所有用户都没有写权限的文件；
+            # find /etc -not -perm /222
+
+    练习29：查找/etc目录下至少有一类用户没有执行权限的文件；
+            # find /etc -not -perm -111
+
+    练习30：查找/etc/init.d目录下，所有用户都有执行权限，且其它用户有写权限的文件；
+            # find /etc/init.d -perm -113
+
+
+4. bash的特性
+
+    文件名通配：
+        *   任意长度的任意字符
+        ?   匹配任意单字符
+        []  匹配指定范围内的任意单字符
+        [^] 匹配指定范围以外的任意单字符
+
+    字符集合：glob (globbing)
+            [:space:] : 所有空白字符
+            [:punct:] : 所有标点符号
+            [:lower:] : 所有小写字母
+            [:upper:] : 所有大写字母
+            [:digit:] : 任意数字，整体相当于0-9
+            [:alnum:] : 任意数字或字母
+            [:alpha:] : 任意大小写字母
+            [:punct:] : 标点符号
+
+    控制命令历史的记录方式：
+        环境变量：        echo $HISTCONTROL
+            ignoredups  ：忽略重复的命令；连续且相同方为“重复”；
+            ignorespace ：忽略所有以空白开头的命令；
+            ignoreboth  ：ignoredups, ignorespace；
+
+        更改方式：
+            export HISTCONTROL="ignorespace"
+            declare -x HISTCONTROL="ignorespace"
+            declare -r XXXX      XXXX变成了只读变量
+
+    bash的快捷键：
+        Ctrl + u：删除光标之前的内容
+        Ctrl + k：删除光标之后的内容
+
+    命令的执行结果状态：
+        bash使用特殊变量$?保存最近一条命令的执行状态结果
+        0：成功
+        1-255：失败
+
+    HERE Documentation：<<
+        # cat > /path/to/somefile << EOF
+
+5. 文本处理工具
+
+    wc命令：
+        wc [OPTION]... [FILE]...
+            -l: lines
+            -w: words
+            -c: characters
+        #ifconfig | wc -l                  #统计一共多少行
+    cut命令：
+        cut [OPTION]... [FILE]...
+            -d DELIMITER: 指明分隔符
+            -f FILEDS:
+        #cut -d: -f1,7 /etc/passwd          #显示第1个和第7个字段
+        #cut -d: -f1-7 /etc/passwd          #显示第1个到第7个字段
+    sort命令：
+        sort [OPTION]... [FILE]...
+            -f: 忽略字符大小写
+            -r: 逆序
+            -t: 字段分隔符
+            -k: 以指定字段为标准排序
+            -n: 以数值大小进行排序
+            -u: uniq，排序后去重
+        #sort -t: -k3 -n /etc/passwd | cut -d: -f3
+    uniq命令：
+        uniq [OPTION]... [FILE]...
+            -c: 显示每行重复出现的次数；
+            -d: 仅显示重复过的行；
+            -u: 仅显示不曾重复的行；
+        #histroy | cut -d' ' -f5 | sort | uniq -c
+        Note: 连续且完全相同方为重复
+
+6. 用户和组管理
+
+    用户创建：useradd
+    组创建：groupadd
+    查看用户相关的ID信息：id
+    切换用户或以其他用户身份执行命令：su
+    用户属性修改：usermod
+    给用户添加密码：passwd
+    删除用户：userdel
+    组属性修改：groupmod
+    组删除：groupdel
+    组密码：gpasswd
+    修改用户属性：chage
+    其它命令：chfn, chsh, finger
+    命令总结：useradd, groupadd, su, id, usermod, userdel, groupmod, groupdel, passwd, newgrp, pwck, gpasswd, chage, chsh, chfn, finger
+
+    对于文件设置的umask之后最后的权限设置为：
+    file：666-umask  如果某一类的执行权限出现了执行权限需要进行 + 1
+    DIR： 777-umask
+
+7. Linux上文本处理三剑客
+
+    grep：文本过滤工具
+          #grep root /etc/passwd --color=auto
+
+    sed： 文本编辑工具
+
+    awk： 文本报告生成器
+
+8. 基本正则表达式元字符
+
+    字符匹配：
+
+        .：  匹配任意单个字符；
+        []： 匹配指定范围内的任意单个字符
+        [^]：匹配指定范围外的任意单个字符
+            [:digit:]、[:lower:]、[:upper:]、[:alpha:]、[:alnum:]、[:punct:]、[:space:]
+
+    匹配次数：
+
+        *：匹配前面的字符任意次；
+            例如: grep "x*y"
+                abxy
+                xay
+                xxxxxxy
+        .*：任意长度的任意字符；
+        \?：匹配其前面的字符0或1次；即前面的可有可无；
+        \+：匹配其前面的字符至少1次；
+        \{m\}：匹配前面的字符m次；
+        \{m,n\}：匹配前面的字符至少m次，至多n次；
+        \{0,n\}：匹配前面的字符至多n次；
+        \{m,\}：匹配前面的字符至少m次；
+
+    位置锚定：
+
+        ^：行首锚定；用于模式的最左侧；
+        $：行尾锚定；用于模式的最右侧；
+
+    分组：
+        \(\)：将一个或多个字符捆绑在一起，当作一个整体进行处理；
+            \(xy\)*ab
+
+        Note：分组括号中的模式匹配到的内容会被正则表达式引擎记录于内部的变量中，这些变量的命名方式为: \1, \2, \3, ...
+            \1: 从左侧起，第一个左括号以及与之匹配右括号之间的模式所匹配到的字符；
+                \(ab\+\(xy\)*\)：
+                    \1: ab\+\(xy\)*
+                    \2: xy
+
+
+9. bash中的变量的种类
+    根据变量的生效范围等标准：
+        本地变量：生效范围为当前shell进程；对当前shell之外的其它shell进程，包括当前shell的子shell进程均无效；
+        环境变量：生效范围为当前shell进程及其子进程；
+        局部变量：生效范围为当前shell进程中某代码片断(通常指函数)；
+        位置变量：$1, $2, ...来表示，用于让脚本在脚本代码中调用通过命令行传递给它的参数；
+        特殊变量：$?, $0, $*, $@, $#
+
+        本地变量：
+            变量赋值：name='value'
+                可以使用引用：
+                    value:
+                        (1) 可以是直接字串; name="username"
+                        (2) 变量引用：name="$username"
+                        (3) 命令引用：name=`COMMAND`, name=$(COMMAND)
+            变量引用：${name}, $name
+                ""：弱引用，其中的变量引用会被替换为变量值；
+                ''：强引用，其中的变量引用不会被替换为变量值，而保持原字符串；
+            显示已定义的所有变量
+                set
+            销毁变量：
+                unset name
+
+        环境变量：
+            变量声明、赋值：
+                export name=VALUE
+                declare -x name=VALUE
+            变量引用：$name, ${name}
+            显示所有环境变量：
+                export
+                env
+                printenv
+            销毁：
+                unset name
+
+            bash有许多内建的环境变量：PATH, SHELL, UID, HISTSIZE, HOME, PWD, OLD, HISTFILE, PS1
+
+        变量命名法则：
+            1、不能使程序中的保留字：例如if, for;
+            2、只能使用数字、字母及下划线，且不能以数字开头；
+            3、见名知义，
+
+        只读变量：
+            readonly name
+            declare -r name
+
+        位置变量：
+            在脚本代码中调用通过命令行传递给脚本的参数；
+                $1, $2, ...：对应调用第1、第2等参数；
+
+                    shift [n]
+
+                $0: 命令本身；
+
+                $*: 传递给脚本的所有参数；
+                $@: 传递给脚本的所有参数；
+                $#: 传递给脚本的参数的个数；
+
+            示例：判断给出的文件的行数
+                #!/bin/bash
+                linecount="$(wc -l $1| cut -d' ' -f1)"
+                echo "$1 has $linecount lines."
+
+
+10. bash的测试类型(记得加空格)
+
+    数值测试：
+        -gt: 是否大于；
+        -ge: 是否大于等于；
+        -eq: 是否等于；
+        -ne: 是否不等于；
+        -lt: 是否小于；
+        -le: 是否小于等于；
+
+    字符串测试：
+        ==：是否等于；
+        >: 是否大于；
+        <: 是否小于；
+        !=: 是否不等于；
+        =~: 左侧字符串是否能够被右侧的PATTERN所匹配；
+
+        -z "STRING"：测试字符串是否为空，空则为真，不空则为假；
+        -n "STRING"：测试字符串是否不空，不空则为真，空则为假；
+
+*   注意：用于字符串比较时的用到的操作数都应该使用引号；并且表达式一般都是置于[ ] 中，并且要有空格
+        [ "abc" \> "abc" ];echo $?
+
+11. bash条件测试
+
+    文件测试：
+        存在性测试：
+            -a FILE
+            -e FILE: 文件存在性测试，存在为真，否则为假；
+        存在性及类别测试：
+            -b FILE：是否存在且为块设备文件；
+            -c FILE：是否存在且为字符设备文件；
+            -d FILE：是否存在且为目录文件；
+            -f FILE：是否存在且为普通文件；
+            -h FILE 或 -L FILE：存在且为符号链接文件；
+            -p FILE：是否存在且为命名管道文件；
+            -S FILE：是否存在且为套接字文件；
+        文件权限测试：
+            -r FILE：是否存在且可读
+            -w FILE: 是否存在且可写
+            -x FILE: 是否存在且可执行
+        文件特殊权限测试：
+            -g FILE：是否存在且拥有sgid权限；
+            -u FILE：是否存在且拥有suid权限；
+            -k FILE：是否存在且拥有sticky权限；
+        文件大小测试：
+            -s FILE：是否存且非空；
+        文件是否打开：
+            -t fd：  fd表示文件描述符是否已经打开且与某终端相关
+            -N FILE：文件自动上一次被读取之后是否被修改过；
+            -O FILE：当前有效用户是否为文件属主；
+            -G FILE：当前有效用户是否为文件属组；
+
+        双目测试：
+            FILE1 -ef FILE2: FILE1与FILE2是否指向同一个设备上的相同inode
+
+            FILE1 -nt FILE2: FILE1是否新于FILE2；
+            FILE1 -ot FILE2: FILE1是否旧于FILE2；
+
+    组合测试条件：
+        逻辑运算：
+            第一种方式：
+                COMMAND1 && COMMAND2
+                COMMAND1 || COMMAND2
+                ! COMMAND
+
+                [ -e FILE ] && [ -r FILE ]
+
+            第二种方式：
+                EXPRESSION1 -a EXPRESSION2
+                EXPRESSION1 -o EXPRESSION2
+                ! EXPRESSION
+
+            必须使用测试命令进行；
+
+            # [ -z "$hostName" -o "$hostName"=="localhost.localdomain" ] && hostname www.magedu.com
+            # [ -f /bin/cat -a -x /bin/cat ] && cat /etc/fstab      文件是普通文件并且是有可执行权限的
+
+-Linux 系统管理(第7天之后)
+
+
+1. Linux磁盘管理
+    创建文件系统：
+        mkfs命令：
+            (1) # mkfs.FS_TYPE /dev/DEVICE
+                ext4
+                xfs
+                btrfs
+                vfat
+            (2) # mkfs -t FS_TYPE /dev/DEVICE
+
+            -L 'LABEL': 设定卷标
+
+        mke2fs：ext系列文件系统专用管理工具
+            -t {ext2|ext3|ext4}
+            -b {1024|2048|4096}
+            -L 'LABEL'
+            -j: 相当于 -t ext3
+                mkfs.ext3 = mkfs -t ext3 = mke2fs -j = mke2fs -t ext3
+            -i #: 为数据空间中每多少个字节创建一个inode；此大小不应该小于block的大小；
+            -N #：为数据空间创建个多少个inode；
+            -m #: 为管理人员预留的空间占据的百分比；
+            -O FEATURE[,...]：启用指定特性
+                -O ^FEATURE：关闭指定特性
+
+        mkswap：创建交换分区
+            mkswap [options] device
+                -L 'LABEL'
+
+            前提：调整其分区的ID为82；
+
+
+    其它常用工具：
+
+        blkid：块设备属性信息查看
+            blkid [OPTION]... [DEVICE]
+                -U UUID: 根据指定的UUID来查找对应的设备
+                -L LABEL：根据指定的LABEL来查找对应的设备
+
+        e2label：管理ext系列文件系统的LABEL
+            # e2label DEVICE [LABEL]
+
+        tune2fs：重新设定ext系列文件系统可调整参数的值
+            -l：查看指定文件系统超级块信息；super block
+            -L 'LABEL'：修改卷标
+            -m #：修预留给管理员的空间百分比
+            -j: 将ext2升级为ext3
+            -O: 文件系统属性启用或禁用
+            -o: 调整文件系统的默认挂载选项
+            -U UUID: 修改UUID号；
+
+        dumpe2fs：
+            -h：查看超级块信息
+
+    文件系统检测：
+        fsck: File System CheCk
+            fsck.FS_TYPE
+            fsck -t FS_TYPE
+                -a: 自动修复错误
+                -r: 交互式修复错误
+
+                Note: FS_TYPE一定要与分区上已经文件类型相同；
+
+        e2fsck：ext系列文件专用的检测修复工具
+            -y：自动回答为yes;
+            -f：强制修复；
+    块设备：block，存取单位“块”，磁盘
+    字符设备：char，存取单位“字符”，键盘
+
+    设备文件：关联至一个设备驱动程序，进而能够跟与之对应硬件设备进行通信；
+
+        设备号码：
+            主设备号：major number, 标识设备类型
+            次设备号：minor number, 标识同一类型下的不同设备
+
+        硬盘接口类型：
+            并行：
+                IDE：133MB/s
+                SCSI：640MB/s
+            串口：
+                SATA：6Gbps
+                SAS：6Gbps
+                USB：480MB/s
+
+                rpm: rotations per minute
+
+
+        /dev/DEV_FILE
+            磁盘设备的设备文件命名：
+
+            IDE: /dev/hd
+            SCSI, SATA, SAS, USB: /dev/sd
+                不同设备：a-z
+                    /dev/sda, /dev/sdb, ...
+                同一设备上的不同分区：1,2, ...
+                    /dev/sda1, /dev/sda5
+
+        机械式硬盘：
+            track：磁道
+            cylinder: 柱面
+            secotr: 扇区
+                512bytes
+
+            如何分区：
+                按柱面
+
+            0磁道0扇区：512bytes
+                MBR: Master Boot Record
+                    446bytes: boot loader
+                    64bytes：分区表
+                        16bytes: 标识一个分区
+                    2bytes: 55AA
+
+                    4个主分区；
+                        3主分区+1扩展(N个逻辑分区)
+                            逻辑分区
+
+            问题：UEFI, GPT？
+
+    分区管理工具：fdisk, parted, sfdisk
+             fdisk：对于一块硬盘来讲，最多只能管理15分区；
+             # fdisk -l [-u] [device...]
+
+    # fdisk device
+    子命令：管理功能
+            p: print, 显示已有分区；
+            n: new, 创建
+            d: delete, 删除
+            w: write, 写入磁盘并退出
+            q: quit, 放弃更新并退出
+            m: 获取帮助
+            l: 列表所分区id
+            t: 调整分区id
+
+    查看内核是否已经识别新的分区：
+        # cat /proc/partations
+
+    通知内核重新读取硬盘分区表：
+        partx -a /dev/DEVICE
+            -n M:N
+
+        kpartx -a /dev/DEVICE
+            -f: force
+
+        CentOS 5: 使用partprobe
+            partprobe [/dev/DEVICE]
+
+2. bash脚本编程之用户交互
+    read [option]... [name ...]
+        -p 'PROMPT'
+        -t TIMEOUT
+
+    bash -n /path/to/some_script
+        检测脚本中的语法错误
+
+    bash -x /path/to/some_script
+        调试执行
+
+    示例：
+        #!/bin/bash
+        # Version: 0.0.1
+        # Author: MageEdu
+        # Description: read testing
+
+        read -p "Enter a disk special file: " diskfile
+        [ -z "$diskfile" ] && echo "Fool" && exit 1
+
+        if fdisk -l | grep "^Disk $diskfile" &> /dev/null; then
+            fdisk -l $diskfile
+        else
+            echo "Wrong disk special file."
+            exit 2
+        fi
+
+    注意：bash -n 可以检查bash的语法错误
+
+3. RAID
+    Redundant Arrays of Inexpensive Disks
+                        Independent
+
+    Berkeley: A case for Redundent Arrays of Inexpensive Disks RAID
+
+    提高IO能力：
+        磁盘并行读写
+    提高耐用性：
+        磁盘冗余来实现
+
+    级别：多块磁盘组织在一起的工作方式有所不同；
+    RAID实现的方式：
+        外接式磁盘阵列：通过扩展卡提供适配能力
+        内接式RAID：主板集成RAID控制器
+        以上两种都是在BIOS上设置的
+        Software RAID：
+
+    级别：level
+        RAID-0：0, 条带卷，strip;
+        RAID-1: 1, 镜像卷，mirror;
+        RAID-2
+        ..
+        RAID-5：
+        RAID-6
+        RAID的组合：
+        RAID10
+        RAID01
+
+        RAID-0:
+            读、写性能提升；
+            可用空间：N*min(S1,S2,...)
+            无容错能力
+            最少磁盘数：2, 2+
+
+        RAID-1：
+            读性能提升、写性能略有下降；
+            可用空间：1*min(S1,S2,...)
+            有冗余能力
+            最少磁盘数：2, 2+
+
+        RAID-4：
+            1101, 0110, 1011
+
+        RAID-5：
+            读、写性能提升
+            可用空间：(N-1)*min(S1,S2,...)
+            有容错能力：1块磁盘
+            最少磁盘数：3, 3+
+
+        RAID-6：
+            读、写性能提升
+            可用空间：(N-2)*min(S1,S2,...)
+            有容错能力：2块磁盘
+            最少磁盘数：4, 4+
+
+
+        混合类型
+            RAID-10：
+                读、写性能提升
+                可用空间：N*min(S1,S2,...)/2
+                有容错能力：每组镜像最多只能坏一块；
+                最少磁盘数：4, 4+
+            RAID-01:
+
+            RAID-50、RAID7
+
+            JBOD：Just a Bunch Of Disks
+                功能：将多块磁盘的空间合并一个大的连续空间使用；
+                可用空间：sum(S1,S2,...)
+
+        常用级别：RAID-0, RAID-1, RAID-5, RAID-10, RAID-50, JBOD
+
+        实现方式：
+            硬件实现方式
+            软件实现方式
+
+            CentOS 6上的软件RAID的实现：
+                结合内核中的md(multi devices)
+
+                mdadm：模式化的工具
+                    命令的语法格式：mdadm [mode] <raiddevice> [options] <component-devices>
+                        支持的RAID级别：LINEAR, RAID0, RAID1, RAID4, RAID5, RAID6, RAID10;
+
+                    模式：
+                        创建：-C
+                        装配: -A
+                        监控: -F
+                        管理：-f, -r, -a
+
+                    <raiddevice>: /dev/md#
+                    <component-devices>: 任意块设备
+
+
+                    -C: 创建模式
+                        -n #: 使用#个块设备来创建此RAID；
+                        -l #: 指明要创建的RAID的级别；
+                        -a {yes|no}：自动创建目标RAID设备的设备文件；
+                        -c CHUNK_SIZE: 指明块大小；
+                        -x #: 指明空闲盘的个数；
+
+                        例如：创建一个10G可用空间的RAID5；
+
+                    -D: 显示raid的详细信息；
+                        #mdadm -D /dev/md#
+
+                    -f: 标记指定磁盘为损坏；
+                    -a: 添加磁盘
+                    -r: 移除磁盘
+
+                    观察md的状态：
+                        cat /proc/mdstat
+
+                    停止md设备：
+                        mdadm -S /dev/md#
+
+                    # mdadm -C /dev/md0 -a yes -n 3 -x 1 -l 5 /dev/sda{7,8,9,10}
+                    # cat /proc/mdstat
+                    # mke2fs -t ext4 /dev/md0
+                    # blkid /dev/md0 #查看UUID信息
+
+                    #mdadm /dev/md0 -f /dev/sda7  # 设置sda7为损坏 -f参数加在损坏的磁盘前面
+
+                    watch命令：
+                        -n #: 刷新间隔，单位是秒；
+
+                        watch -n# 'COMMAND'
+
+4. LVM2
+
+    LVM: Logical Volume Manager， Version: 2
+
+    dm: device mapper，将一个或多个底层块设备组织成一个逻辑设备的模块；
+        /dev/dm-#
+
+    /dev/mapper/VG_NAME-LV_NAME
+        /dev/mapper/vol0-root
+    /dev/VG_NAME/LV_NAME
+        /dev/vol0/root
+
+    pv管理工具：
+        pvs：简要pv信息显示
+        pvdisplay：显示pv的详细信息
+
+        pvcreate /dev/DEVICE: 创建pv
+
+    vg管理工具：
+        vgs
+        vgdisplay
+
+        vgcreate  [-s #[kKmMgGtTpPeE]] VolumeGroupName  PhysicalDevicePath [PhysicalDevicePath...]
+        vgextend  VolumeGroupName  PhysicalDevicePath [PhysicalDevicePath...]
+        vgreduce  VolumeGroupName  PhysicalDevicePath [PhysicalDevicePath...]
+            先做pvmove
+
+        vgremove
+
+    lv管理工具：
+        lvs
+        lvdisplay
+
+        lvcreate -L #[mMgGtT] -n NAME VolumeGroup
+
+        lvremove /dev/VG_NAME/LV_NAME
+
+    扩展逻辑卷：
+        # lvextend -L [+]#[mMgGtT] /dev/VG_NAME/LV_NAME
+        # resize2fs /dev/VG_NAME/LV_NAME
+
+    缩减逻辑卷：(首先要卸载，在进行文件系统的强制检测和修复，缩减逻辑边界)
+        # umount    /dev/VG_NAME/LV_NAME
+        # e2fsck -f /dev/VG_NAME/LV_NAME
+        # resize2fs /dev/VG_NAME/LV_NAME #[mMgGtT]
+        # lvreduce -L [-]#[mMgGtT] /dev/VG_NAME/LV_NAME
+        # mount
+
+    快照：snapshot
+        lvcreate -L #[mMgGtT] -p r -s -n snapshot_lv_name original_lv_name
+
+5. btrfs文件系统
+
+    Btrfs (B-tree, Butter FS, Better FS), GPL, Oracle, 2007, CoW;
+    ext3/ext4, xfs
+
+    核心特性：
+        多物理卷支持：btrfs可由多个底层物理卷组成；支持RAID，以联机“添加”、“移除”，“修改”；
+        写时复制更新机制(CoW)：复制、更新及替换指针，而非“就地”更新；
+        数据及元数据校验码：checksum
+        子卷：sub_volume
+        快照：支持快照的快照；
+        透明压缩：
+
+    文件系统创建：
+        mkfs.btrfs
+            -L 'LABEL'
+            -d <type>: raid0, raid1, raid5, raid6, raid10, single
+            -m <profile>: raid0, raid1, raid5, raid6, raid10, single, dup
+            -O <feature>
+                -O list-all: 列出支持的所有feature；
+
+        属性查看：
+            btrfs filesystem show
+
+        挂载文件系统：
+            mount -t btrfs /dev/sdb MOUNT_POINT
+
+        透明压缩机制：
+            mount -o compress={lzo|zlib} DEVICE MOUNT_POINT
+
+    子命令：filesystem, device, balance, subvolume
+
+6. 压缩、解压缩及归档工具
+
+    compress/uncompress: .Z
+    gzip/gunzip: .gz
+    bzip2/bunzip2: .bz2
+    xz/unxz: .xz
+    zip/unzip
+    tar, cpio
+
+    1、gzip/gunzip
+
+        gzip [OPTION]... FILE ...
+            -d: 解压缩，相当于gunzip
+            -c: 将结果输出至标准输出；
+            -#：1-9，指定压缩比；
+
+        zcat：不显式展开的前提下查看文本文件内容；
+
+    2、bzip2/bunzip2/bzcat
+
+        bzip2 [OPTION]... FILE ...
+            -k: keep, 保留原文件；
+            -d：解压缩
+            -#：1-9，压缩比，默认为6；
+
+        bzcat：不显式展开的前提下查看文本文件内容；
+
+    3、xz/unxz/xzcat
+
+        bzip2 [OPTION]... FILE ...
+            -k: keep, 保留原文件；
+            -d：解压缩
+            -#：1-9，压缩比，默认为6；
+
+        xzcat: 不显式展开的前提下查看文本文件内容；
+
+    4、tar
+        tar [OPTION]...
+
+        (1) 创建归档
+            tar -c -f /PATH/TO/SOMEFILE.tar FILE...
+
+            tar -cf /PATH/TO/SOMEFILE.tar FILE...
+
+        (2) 查看归档文件中的文件列表
+            tar -t -f /PATH/TO/SOMEFILE.tar
+
+        (3) 展开归档
+            tar -x -f /PATH/TO/SOMEFILE.tar
+
+            tar -x -f /PATH/TO/SOMEFILE.tar -C /PATH/TO/DIR
+
+        结合压缩工具实现：归档并压缩
+
+            -j: bzip2, -z: gzip, -J: xz
+
+7. bash脚本编程
+
+    if语句、bash -n、bash -x
+
+        CONDITION:
+            bash命令：
+                用命令的执行状态结果；
+                    成功：true
+                    失败：flase
+
+                成功或失败的意义：取决于用到的命令；
+
+        单分支：
+            if CONDITION; then
+                if-true
+            fi
+
+        双分支：
+            if CONDITION; then
+                if-true
+            else
+                if-false
+            fi
+
+        多分支：
+            if CONDITION1; then
+                if-true
+            elif CONDITION2; then
+                if-ture
+            elif CONDITION3; then
+                if-ture
+            ...
+            esle
+                all-false
+            fi
+
+            逐条件进行判断，第一次遇为“真”条件时，执行其分支，而后结束；
+
+        示例：用户键入文件路径，脚本来判断文件类型；
+            #!/bin/bash
+            #
+
+            read -p "Enter a file path: " filename
+
+            if [ -z "$filename" ]; then
+                echo "Usage: Enter a file path."
+                exit 2
+            fi
+
+            if [ ! -e $filename ]; then
+                echo "No such file."
+                exit 3
+            fi
+
+            if [ -f $filename ]; then
+                echo "A common file."
+            elif [ -d $filename ]; then
+                echo "A directory."
+            elif [ -L $filename ]; then
+                echo "A symbolic file."
+            else
+                echo "Other type."
+            fi
+
+        注意：if语句可嵌套；
+
+    循环：for, while, until
+        循环体：要执行的代码；可能要执行n遍；
+            进入条件：
+            退出条件：
+
+        for循环：
+            for 变量名  in 列表; do
+                循环体
+            done
+
+            执行机制：
+                依次将列表中的元素赋值给“变量名”; 每次赋值后即执行一次循环体; 直到列表中的元素耗尽，循环结束;
+
+            示例：添加10个用户, user1-user10；密码同用户名；
+                #!/bin/bash
+                #
+
+                if [ ! $UID -eq 0 ]; then
+                    echo "Only root."
+                    exit 1
+                fi
+
+                for i in {1..10}; do
+                    if id user$i &> /dev/null; then
+                    echo "user$i exists."
+                    else
+                        useradd user$i
+                    if [ $? -eq 0 ]; then
+                        echo "user$i" | passwd --stdin user$i &> /dev/null
+                            echo "Add user$i finished."
+                        fi
+                    fi
+                done
+
+            列表生成方式：
+                (1) 直接给出列表；
+                (2) 整数列表：
+                    (a) {start..end}
+                    (b) $(seq [start [step]] end)
+                (3) 返回列表的命令；
+                    $(COMMAND)
+                (4) glob
+                (b) 变量引用；
+                    $@, $*
+
+
+            示例：判断某路径下所有文件的类型
+                #!/bin/bash
+                #
+
+                for file in $(ls /var); do
+                    if [ -f /var/$file ]; then
+                    echo "Common file."
+                    elif [ -L /var/$file ]; then
+                    echo "Symbolic file."
+                    elif [ -d /var/$file ]; then
+                    echo "Directory."
+                    else
+                    echo "Other type."
+                    fi
+                done
+
+            示例：
+                #!/bin/bash
+                #
+                declare -i estab=0
+                declare -i listen=0
+                declare -i other=0
+
+                for state in $( netstat -tan | grep "^tcp\>" | awk '{print $NF}'); do
+                    if [ "$state" == 'ESTABLISHED' ]; then
+                    let estab++
+                    elif [ "$state" == 'LISTEN' ]; then
+                    let listen++
+                    else
+                    let other++
+                    fi
+                done
+
+                echo "ESTABLISHED: $estab"
+                echo "LISTEN: $listen"
+                echo "Unkown: $other"
+
+
+
+
+
+
+
+
+
+
+
+
